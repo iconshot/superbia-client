@@ -1,11 +1,11 @@
-# [superbia-client](https://superbia.dev/client)
+# [@superbia/client](https://superbia.dev/client)
 
 Connect to a Superbia server.
 
 ## Installation
 
 ```
-npm i superbia-client
+npm i @superbia/client
 ```
 
 Available on browser and Node.
@@ -15,7 +15,7 @@ Available on browser and Node.
 #### Browser:
 
 ```js
-import { Client } from "superbia-client";
+import { Client } from "@superbia/client";
 
 const client = new Client({
   url: "http://localhost:8080", // server url
@@ -33,7 +33,7 @@ npm i node-fetch ws form-data
 ```
 
 ```js
-const { Client } = require("superbia-client");
+const { Client } = require("@superbia/client");
 
 const fetch = require("node-fetch");
 const WebSocket = require("ws");
@@ -68,7 +68,7 @@ const data = response.data(); // { user: {...}, userPosts: {...} }
 #### Browser
 
 ```js
-import { Upload } from "superbia-client";
+import { Upload } from "@superbia/client";
 
 const input = document.getElementById("input");
 
@@ -86,7 +86,7 @@ const data = response.data(); // { uploadPhoto: {...} }
 ```js
 const fs = require("fs");
 
-const { Upload } = require("superbia-client");
+const { Upload } = require("@superbia/client");
 
 const stream = fs.createReadStream("./photo.jpg");
 
