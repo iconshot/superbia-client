@@ -12,7 +12,7 @@ Available on browser and Node.
 
 ## Get started
 
-#### Browser:
+#### Browser
 
 ```js
 import { Client } from "@superbia/client";
@@ -26,7 +26,7 @@ const client = new Client({
 });
 ```
 
-#### Node:
+#### Node
 
 ```
 npm i node-fetch ws form-data
@@ -48,9 +48,7 @@ const client = new Client({
 });
 ```
 
-## Basics
-
-### Requests
+## Requests
 
 You can access multiple endpoints in a single request.
 
@@ -63,7 +61,7 @@ const response = await client.request({
 const data = response.data(); // { user: {...}, userPosts: {...} }
 ```
 
-### Uploads
+## Uploads
 
 #### Browser
 
@@ -97,7 +95,7 @@ const response = await client.request({
 const data = response.data(); // { uploadPhoto: null }
 ```
 
-### Subscriptions
+## Subscriptions
 
 Subscriptions use `WebSocket` under the hood.
 
@@ -111,7 +109,7 @@ subscription.on("data", (data) => {
 });
 ```
 
-### Headers
+## Headers
 
 Headers can be passed to the server for both requests and subscriptions.
 
