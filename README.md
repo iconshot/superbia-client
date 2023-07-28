@@ -78,7 +78,7 @@ const response = await client.request({
   uploadPhoto: { upload: new Upload(file) },
 });
 
-const data = response.data(); // { uploadPhoto: {...} }
+const data = response.data(); // { uploadPhoto: null }
 ```
 
 #### Node
@@ -94,7 +94,7 @@ const response = await client.request({
   uploadPhoto: { upload: new Upload(stream) },
 });
 
-const data = response.data(); // { uploadPhoto: {...} }
+const data = response.data(); // { uploadPhoto: null }
 ```
 
 ### Subscriptions
@@ -104,14 +104,10 @@ Subscriptions use `WebSocket` under the hood.
 ```js
 client.init(); // create WebSocket connection
 
-const subscription = client.subscribe({ newPost: { userId: "1" } });
-
-subscription.on("success", () => {
-  // ...
-});
+const subscription = client.subscribe({ counter: null });
 
 subscription.on("data", (data) => {
-  // { newPost: {...} }
+  // { counter: Int }
 });
 ```
 
