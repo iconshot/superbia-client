@@ -56,6 +56,8 @@ class Client extends EventEmitter {
     this.ws.close();
 
     this.ws = null;
+
+    this.emit("destroy");
   }
 
   async request(endpoints) {
@@ -191,6 +193,8 @@ class Client extends EventEmitter {
     this.ws = ws;
 
     ws.onopen = () => {
+      this.emit("init");
+
       /*
 
       since messages are only sent when the ws connection is open,

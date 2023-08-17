@@ -119,11 +119,15 @@ const headers = {
   "Accept-Language": "en",
 };
 
-client.init(headers);
+client.update(headers);
 
-// the next requests and subscriptions will pass the headers
+// this request will pass the new headers
 
 const response = await client.request({ userPosts: { userId: "1" } });
+
+// create the WebSocket with the new headers
+
+client.init();
 
 const subscription = client.subscribe({ newPost: { userId: "1" } });
 ```
