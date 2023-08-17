@@ -36,9 +36,11 @@ class Client extends EventEmitter {
     this.messages = [];
   }
 
-  init(headers = null) {
+  update(headers) {
     this.headers = headers;
+  }
 
+  init() {
     if (this.ws !== null) {
       this.ws.onclose = () => this.openWebSocket();
 
@@ -46,6 +48,14 @@ class Client extends EventEmitter {
     } else {
       this.openWebSocket();
     }
+  }
+
+  destroy() {
+    this.ws.onclose = null;
+
+    this.ws.close();
+
+    this.ws = null;
   }
 
   async request(endpoints) {
@@ -381,14 +391,6 @@ class Client extends EventEmitter {
     this.subscriptions.forEach((subscription) => {
       subscription.subscribe();
     });
-  }
-
-  destroy() {
-    this.ws.onclose = null;
-
-    this.ws.close();
-
-    this.ws = null;
   }
 }
 
