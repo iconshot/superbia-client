@@ -58,7 +58,7 @@ const response = await client.request({
   userPosts: { userId: "1", first: 20 },
 });
 
-const data = response.data(); // { user: {...}, userPosts: {...} }
+const result = response.result(); // { user: {...}, userPosts: {...} }
 ```
 
 ## Uploads
@@ -76,7 +76,7 @@ const response = await client.request({
   uploadPhoto: { upload: new Upload(file) },
 });
 
-const data = response.data(); // { uploadPhoto: null }
+const result = response.result(); // { uploadPhoto: null }
 ```
 
 #### Node
@@ -92,7 +92,7 @@ const response = await client.request({
   uploadPhoto: { upload: new Upload(stream) },
 });
 
-const data = response.data(); // { uploadPhoto: null }
+const result = response.result(); // { uploadPhoto: null }
 ```
 
 ## Subscriptions
@@ -104,7 +104,7 @@ client.init(); // create WebSocket connection
 
 const subscription = client.subscribe({ counter: null });
 
-subscription.on("data", (data) => {
+subscription.on("result", (result) => {
   // { counter: Int }
 });
 ```
