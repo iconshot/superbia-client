@@ -1,19 +1,27 @@
 {
   "name": "@superbia/client",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "description": "Connect to a Superbia server.",
-  "homepage": "https://superbia.dev/client",
+  "homepage": "https://superbia.dev",
   "repository": {
     "type": "git",
     "url": "https://github.com/iconshot/superbia-client.git"
   },
-  "main": "index.js",
+  "main": "dist/index.js",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "npm run clean && tsc",
+    "prepare": "npm run build"
+  },
   "keywords": [
     "superbia",
     "client"
   ],
   "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  },
   "dependencies": {
-    "eventemitter3": "^5.0.1"
+    "everemitter": "^1.1.6"
   }
 }
