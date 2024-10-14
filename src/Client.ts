@@ -5,12 +5,12 @@ import { EndpointResponse, Response } from "./Response";
 import { Subscription } from "./Subscription";
 import { Emitter } from "./Emitter";
 
-interface Endpoint {
+export interface Endpoint {
   params: Record<string, any> | null;
   result: any;
 }
 
-type EndpointRecord = Record<string, Endpoint>;
+export type EndpointRecord = Record<string, Endpoint>;
 
 type EndpointParams<V extends EndpointRecord> = Partial<{
   [K in keyof V]: V[K]["params"];
