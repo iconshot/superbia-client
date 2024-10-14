@@ -1,3 +1,6 @@
 export * from "./Client";
-export * from "./Upload";
+export * from "./Emitter";
 export * from "./Response";
+export * from "./Subscription";
+export * from "./SuperbiaError";
+export * from "./Upload";
