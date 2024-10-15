@@ -1,5 +1,6 @@
 import { SuperbiaError } from "./SuperbiaError";
-import { Result } from "./Emitter";
+
+export type ResponseResult = Record<string, any>;
 
 type EndpointResponseError = { code: number | null; message: string } | null;
 
@@ -10,7 +11,7 @@ export interface EndpointResponse {
 
 // methods are called json() and result() instead of verbs to keep consistency with global Response methods like json() or text()
 
-export class Response<R extends Result> {
+export class Response<R extends ResponseResult> {
   constructor(private readonly response: EndpointResponse) {}
 
   public json(): EndpointResponse {

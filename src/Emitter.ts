@@ -1,15 +1,13 @@
 import { EverEmitter } from "everemitter";
 
 import { SuperbiaError } from "./SuperbiaError";
-import { Response } from "./Response";
+import { Response, ResponseResult } from "./Response";
 
-export type Result = Record<string, any>;
-
-export type EmitterSignatures<R extends Result> = {
+export type EmitterSignatures<R extends ResponseResult> = {
   response: (response: Response<R>) => any;
   success: () => any;
   result: (result: R) => any;
   error: (error: SuperbiaError) => any;
 };
 
-export class Emitter extends EverEmitter<EmitterSignatures<Result>> {}
+export class Emitter extends EverEmitter<EmitterSignatures<ResponseResult>> {}

@@ -5,6 +5,20 @@ import { EndpointResponse, Response } from "./Response";
 import { Subscription } from "./Subscription";
 import { Emitter } from "./Emitter";
 
+export interface Pagination<K> {
+  nodes: K[];
+  hasNextPage: boolean;
+  nextPageCursor: string | null;
+}
+
+export type Result<T> = T extends null
+  ? null
+  : T extends (infer U)[]
+  ? Result<U>[]
+  : T extends object
+  ? { [K in keyof T]: Result<T[K]> } & { _typename: string }
+  : T;
+
 export interface Endpoint {
   params: Record<string, any> | null;
   result: any;
@@ -17,7 +31,7 @@ type EndpointParams<V extends EndpointRecord> = Partial<{
 }>;
 
 type EndpointResult<V extends EndpointRecord, P> = {
-  [K in keyof P]: K extends keyof V ? V[K]["result"] : never;
+  [K in keyof P]: K extends keyof V ? Result<V[K]["result"]> : never;
 };
 
 export type EndpointInput = Record<
