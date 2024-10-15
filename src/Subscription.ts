@@ -1,9 +1,11 @@
 import { EverEmitter } from "everemitter";
 
 import { Client, EndpointInput } from "./Client";
-import { EmitterSignatures } from "./Emitter";
+import { EmitterSignatures, Result } from "./Emitter";
 
-export class Subscription<R> extends EverEmitter<EmitterSignatures<R>> {
+export class Subscription<R extends Result> extends EverEmitter<
+  EmitterSignatures<R>
+> {
   constructor(
     private readonly client: Client,
     private readonly subscriptionKey: number,
