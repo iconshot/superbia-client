@@ -1,7 +1,7 @@
 import { EverEmitter } from "everemitter";
 
 import { Upload } from "./Upload";
-import { EndpointResponse, Response } from "./Response";
+import { Response, ResponseResult, ServerResponse } from "./Response";
 import { Subscription } from "./Subscription";
 import { Emitter } from "./Emitter";
 
@@ -62,7 +62,7 @@ export class Client<
 
   private ws: WebSocket | null = null; // websocket
 
-  private subscriptions: Map<number, Subscription<{}>> = new Map();
+  private subscriptions: Map<number, Subscription<ResponseResult>> = new Map();
 
   private subscriptionKey: number = 0;
 
@@ -194,7 +194,7 @@ export class Client<
     }
   }
 
-  public parseRequestEndpoints(value: any, uploads: Map<number, Upload>): any {
+  private parseRequestEndpoints(value: any, uploads: Map<number, Upload>): any {
     if (value === null) {
       return null;
     }
@@ -226,7 +226,7 @@ export class Client<
     return value;
   }
 
-  public openWebSocket(): void {
+  private openWebSocket(): void {
     const { WebSocket } = this;
 
     let url = this.wsUrl;
@@ -277,7 +277,7 @@ export class Client<
       const {
         subscriptionKey,
         response: json,
-      }: { subscriptionKey: number; response: EndpointResponse } = JSON.parse(
+      }: { subscriptionKey: number; response: ServerResponse } = JSON.parse(
         message.data
       );
 
@@ -287,7 +287,7 @@ export class Client<
         return;
       }
 
-      const response = new Response<{}>(json);
+      const response = new Response<ResponseResult>(json);
 
       subscription.emit("response", response);
 
@@ -370,7 +370,7 @@ export class Client<
     this.sendAll();
   }
 
-  public sendAll(): void {
+  private sendAll(): void {
     const { WebSocket } = this;
 
     if (this.ws === null) {
@@ -392,7 +392,7 @@ export class Client<
 
   public setSubscription(
     subscriptionKey: number,
-    subscription: Subscription<{}>
+    subscription: Subscription<ResponseResult>
   ): void {
     this.subscriptions.set(subscriptionKey, subscription);
   }
@@ -408,7 +408,7 @@ export class Client<
 
     this.emit("subscribe", endpoint, emitter);
 
-    const self = this as unknown as Client<{}, {}>;
+    const self = this as Client<any, any>;
 
     const subscription = new Subscription<EndpointResult<U, P>>(
       self,
@@ -471,7 +471,7 @@ export class Client<
 
   */
 
-  public subscribeAll(): void {
+  private subscribeAll(): void {
     this.messages = [];
 
     this.subscriptions.forEach((subscription): void => {

@@ -2,25 +2,30 @@ import { SuperbiaError } from "./SuperbiaError";
 
 export type ResponseResult = Record<string, any>;
 
-type EndpointResponseError = { code: number | null; message: string } | null;
+type ServerResponseError = { code: number | null; message: string } | null;
 
-export interface EndpointResponse {
-  data: Record<string, { data: any; error: EndpointResponseError }>;
-  error: EndpointResponseError;
+export interface ServerResponse {
+  data: Record<string, { data: any; error: ServerResponseError }>;
+  error: ServerResponseError;
 }
 
 // methods are called json() and result() instead of verbs to keep consistency with global Response methods like json() or text()
 
 export class Response<R extends ResponseResult> {
-  constructor(private readonly response: EndpointResponse) {}
+  // since we may call result() multiple times, we cache the result
 
-  public json(): EndpointResponse {
-    return this.response;
+  private cache: { result: R | null; error: Error | null } = {
+    result: null,
+    error: null,
+  };
+
+  constructor(private readonly response: ServerResponse) {
+    this.process();
   }
 
   /*
   
-  convert this.response to a more readable object
+  convert response to a more readable object
 
   input:
   
@@ -46,44 +51,67 @@ export class Response<R extends ResponseResult> {
       }
     }
 
-  throws an Error if there's any error in this.response
+  the output will later be used in parse()
 
   */
 
-  public parse(): R | null {
-    if (this.response.error !== null) {
-      throw new SuperbiaError(
-        this.response.error.code,
-        this.response.error.message
+  private process(): void {
+    const response = this.response;
+
+    if (response.error !== null) {
+      this.cache.error = new SuperbiaError(
+        response.error.code,
+        response.error.message
       );
+
+      return;
     }
 
     /*
-    
+  
     if response.data is null, it means two things:
 
-    - it's a subscription response
+    - it's the first subscription response
     - we can emit the "success" event for the subscription
 
     */
 
-    if (this.response.data === null) {
-      return null;
+    if (response.data === null) {
+      return;
     }
 
-    const results: Record<string, any> = {};
+    const results: ResponseResult = {};
 
-    for (const key in this.response.data) {
-      const result = this.response.data[key];
+    for (const key in response.data) {
+      const result = response.data[key];
 
       if (result.error !== null) {
-        throw new SuperbiaError(result.error.code, result.error.message);
+        this.cache.error = new SuperbiaError(
+          result.error.code,
+          result.error.message
+        );
+
+        return;
       }
 
       results[key] = result.data;
     }
 
-    return results as R;
+    this.cache.result = results as R;
+  }
+
+  public json(): ServerResponse {
+    return this.response;
+  }
+
+  public parse(): R | null {
+    const { result, error } = this.cache;
+
+    if (error !== null) {
+      throw error;
+    }
+
+    return result;
   }
 
   public result(): R {
