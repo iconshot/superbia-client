@@ -166,7 +166,7 @@ export class Client<
     try {
       const fetchResponse = await fetch(this.url, options);
 
-      const json = await fetchResponse.json();
+      const json: ServerResponse = await fetchResponse.json();
 
       const response = new Response<EndpointResult<T, P>>(json);
 
