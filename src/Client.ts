@@ -42,8 +42,8 @@ export type EndpointInput = Record<
 type ClientSignatures = {
   init: () => any;
   deinit: () => any;
-  request: (endpoints: EndpointInput, emitter: Emitter) => any;
-  subscribe: (endpoint: EndpointInput, emitter: Emitter) => any;
+  request: (endpoints: EndpointInput, emitter: Emitter<ResponseResult>) => any;
+  subscribe: (endpoint: EndpointInput, emitter: Emitter<ResponseResult>) => any;
 };
 
 export class Client<
@@ -134,7 +134,7 @@ export class Client<
 
   public async request<P extends EndpointParams<T>>(
     endpoints: P
-  ): Promise<Response<EndpointResult<T, P>>> {
+  ): Promise<EndpointResult<T, P>> {
     const { fetch, FormData } = this;
 
     const emitter = new Emitter();
@@ -172,22 +172,14 @@ export class Client<
 
       emitter.emit("response", response);
 
-      try {
-        const result = response.result();
+      const result = response.result()!;
 
-        emitter.emit("success"); // consistent with subscription
+      emitter.emit("success"); // consistent with subscription
 
-        emitter.emit("result", result);
-      } catch (error) {
-        // we don't throw from here because the caller may need the raw json (e.g. superbia playground)
+      emitter.emit("result", result);
 
-        emitter.emit("error", error);
-      }
-
-      return response;
+      return result;
     } catch (error) {
-      // we do throw an error here because it means there's something wrong with the fetch call itself
-
       emitter.emit("error", error);
 
       throw error;
@@ -292,7 +284,7 @@ export class Client<
       subscription.emit("response", response);
 
       try {
-        const result = response.parse();
+        const result = response.result();
 
         if (result === null) {
           subscription.emit("success");
@@ -420,21 +412,19 @@ export class Client<
 
     // ws.onmessage will take care of emitting these events
 
-    subscription.on("response", (response): void => {
-      emitter.emit("response", response);
-    });
-
-    subscription.on("success", (): void => {
-      emitter.emit("success");
-    });
-
-    subscription.on("result", (result): void => {
-      emitter.emit("result", result);
-    });
-
-    subscription.on("error", (error): void => {
-      emitter.emit("error", error);
-    });
+    subscription
+      .on("response", (response): void => {
+        emitter.emit("response", response);
+      })
+      .on("success", (): void => {
+        emitter.emit("success");
+      })
+      .on("result", (result): void => {
+        emitter.emit("result", result);
+      })
+      .on("error", (error): void => {
+        emitter.emit("error", error);
+      });
 
     return subscription;
   }

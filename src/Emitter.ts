@@ -10,4 +10,6 @@ export type EmitterSignatures<R extends ResponseResult> = {
   error: (error: SuperbiaError) => any;
 };
 
-export class Emitter extends EverEmitter<EmitterSignatures<ResponseResult>> {}
+export class Emitter<R extends ResponseResult> extends EverEmitter<
+  EmitterSignatures<R>
+> {}

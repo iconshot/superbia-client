@@ -9,8 +9,6 @@ export interface ServerResponse {
   error: ServerResponseError;
 }
 
-// methods are called json() and result() instead of verbs to keep consistency with global Response methods like json() or text()
-
 export class Response<R extends ResponseResult> {
   // since we may call result() multiple times, we cache the result
 
@@ -51,7 +49,7 @@ export class Response<R extends ResponseResult> {
       }
     }
 
-  the output will later be used in parse()
+  the output will later be used in result()
 
   */
 
@@ -104,7 +102,7 @@ export class Response<R extends ResponseResult> {
     return this.response;
   }
 
-  public parse(): R | null {
+  public result(): R | null {
     const { result, error } = this.cache;
 
     if (error !== null) {
@@ -112,9 +110,5 @@ export class Response<R extends ResponseResult> {
     }
 
     return result;
-  }
-
-  public result(): R {
-    return this.parse()!;
   }
 }
