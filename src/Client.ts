@@ -179,7 +179,7 @@ export class Client<
       emitter.emit("result", result);
 
       return result;
-    } catch (error) {
+    } catch (error: any) {
       emitter.emit("error", error);
 
       throw error;
@@ -291,7 +291,7 @@ export class Client<
         } else {
           subscription.emit("result", result);
         }
-      } catch (error) {
+      } catch (error: any) {
         subscription.emit("error", error);
       }
     };
