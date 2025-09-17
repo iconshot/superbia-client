@@ -9,7 +9,7 @@ export interface Document {
   __typename__: string;
 }
 
-export interface Pagination<K> {
+export interface Pagination<K> extends Document {
   nodes: K[];
   hasNextPage: boolean;
   nextPageCursor: string | null;
