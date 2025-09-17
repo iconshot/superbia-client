@@ -5,6 +5,10 @@ import { Response, ResponseResult, ServerResponse } from "./Response";
 import { Subscription } from "./Subscription";
 import { Emitter } from "./Emitter";
 
+export interface ResultDocument {
+  __typename__: string;
+}
+
 export interface Pagination<K> {
   nodes: K[];
   hasNextPage: boolean;
@@ -16,7 +20,7 @@ export type Result<T> = T extends null
   : T extends (infer U)[]
   ? Result<U>[]
   : T extends object
-  ? { [K in keyof T]: Result<T[K]> } & { _typename: string }
+  ? { [K in keyof T]: Result<T[K]> }
   : T;
 
 export interface Endpoint {

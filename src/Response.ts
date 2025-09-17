@@ -1,4 +1,4 @@
-import { SuperbiaError } from "./SuperbiaError";
+import { ErrorWithCode } from "./ErrorWithCode";
 
 export type ResponseResult = Record<string, any>;
 
@@ -57,7 +57,7 @@ export class Response<R extends ResponseResult> {
     const response = this.response;
 
     if (response.error !== null) {
-      this.cache.error = new SuperbiaError(
+      this.cache.error = new ErrorWithCode(
         response.error.code,
         response.error.message
       );
@@ -84,7 +84,7 @@ export class Response<R extends ResponseResult> {
       const result = response.result[key];
 
       if (result.error !== null) {
-        this.cache.error = new SuperbiaError(
+        this.cache.error = new ErrorWithCode(
           result.error.code,
           result.error.message
         );
