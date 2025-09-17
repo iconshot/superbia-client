@@ -5,7 +5,7 @@ export type ResponseResult = Record<string, any>;
 type ServerResponseError = { code: number | null; message: string } | null;
 
 export interface ServerResponse {
-  data: Record<string, { data: any; error: ServerResponseError }>;
+  result: Record<string, { result: any; error: ServerResponseError }>;
   error: ServerResponseError;
 }
 
@@ -28,9 +28,9 @@ export class Response<R extends ResponseResult> {
   input:
   
     {
-      data: {
+      result: {
         user: {
-          data: {
+          result: {
             id: "1",
             name: "Jhon Doe",
           },
@@ -49,7 +49,7 @@ export class Response<R extends ResponseResult> {
       }
     }
 
-  the output will later be used in result()
+  the output will be later used in result()
 
   */
 
@@ -67,21 +67,21 @@ export class Response<R extends ResponseResult> {
 
     /*
   
-    if response.data is null, it means two things:
+    if response.result is null, it means two things:
 
     - it's the first subscription response
     - we can emit the "success" event for the subscription
 
     */
 
-    if (response.data === null) {
+    if (response.result === null) {
       return;
     }
 
     const results: ResponseResult = {};
 
-    for (const key in response.data) {
-      const result = response.data[key];
+    for (const key in response.result) {
+      const result = response.result[key];
 
       if (result.error !== null) {
         this.cache.error = new SuperbiaError(
@@ -92,7 +92,7 @@ export class Response<R extends ResponseResult> {
         return;
       }
 
-      results[key] = result.data;
+      results[key] = result.result;
     }
 
     this.cache.result = results as R;

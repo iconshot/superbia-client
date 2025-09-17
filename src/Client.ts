@@ -196,7 +196,7 @@ export class Client<
 
       uploads.set(uploadKey, value);
 
-      return { uploadKey };
+      return { __upload__: uploadKey };
     }
 
     if (Array.isArray(value)) {
