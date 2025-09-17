@@ -5,7 +5,7 @@ import { Response, ResponseResult, ServerResponse } from "./Response";
 import { Subscription } from "./Subscription";
 import { Emitter } from "./Emitter";
 
-export interface ResultDocument {
+export interface Document {
   __typename__: string;
 }
 
