@@ -1,3 +1,5 @@
+import Tsion from "tsion";
+
 import { EverEmitter } from "everemitter";
 
 import { Upload } from "./Upload";
@@ -18,10 +20,10 @@ export interface Pagination<K> extends Document {
 export type Result<T> = T extends null
   ? null
   : T extends (infer U)[]
-  ? Result<U>[]
-  : T extends object
-  ? { [K in keyof T]: Result<T[K]> }
-  : T;
+    ? Result<U>[]
+    : T extends object
+      ? { [K in keyof T]: Result<T[K]> }
+      : T;
 
 export interface Endpoint {
   params: Record<string, any> | null;
@@ -52,7 +54,7 @@ type ClientSignatures = {
 
 export class Client<
   T extends EndpointRecord = {},
-  U extends EndpointRecord = {}
+  U extends EndpointRecord = {},
 > extends EverEmitter<ClientSignatures> {
   private readonly url: string;
   private readonly wsUrl: string;
@@ -137,7 +139,7 @@ export class Client<
   }
 
   public async request<P extends EndpointParams<T>>(
-    endpoints: P
+    endpoints: P,
   ): Promise<EndpointResult<T, P>> {
     const { fetch, FormData } = this;
 
@@ -153,7 +155,7 @@ export class Client<
 
     const body = new FormData(); // fetch body
 
-    body.append("endpoints", JSON.stringify(parsed));
+    body.append("endpoints", Tsion.encode(parsed));
 
     // append uploads to body, if any
 
@@ -170,9 +172,11 @@ export class Client<
     try {
       const fetchResponse = await fetch(this.url, options);
 
-      const json: ServerResponse = await fetchResponse.json();
+      const text: string = await fetchResponse.text();
 
-      const response = new Response<EndpointResult<T, P>>(json);
+      const serverResponse: ServerResponse = Tsion.decode(text);
+
+      const response = new Response<EndpointResult<T, P>>(serverResponse);
 
       emitter.emit("response", response);
 
@@ -205,7 +209,7 @@ export class Client<
 
     if (Array.isArray(value)) {
       return value.map((tmpValue): any =>
-        this.parseRequestEndpoints(tmpValue, uploads)
+        this.parseRequestEndpoints(tmpValue, uploads),
       );
     }
 
@@ -272,9 +276,9 @@ export class Client<
     ws.onmessage = (message: MessageEvent<string>): void => {
       const {
         subscriptionKey,
-        response: json,
-      }: { subscriptionKey: number; response: ServerResponse } = JSON.parse(
-        message.data
+        response: serverResponse,
+      }: { subscriptionKey: number; response: ServerResponse } = Tsion.decode(
+        message.data,
       );
 
       const subscription = this.subscriptions.get(subscriptionKey);
@@ -283,7 +287,7 @@ export class Client<
         return;
       }
 
-      const response = new Response<ResponseResult>(json);
+      const response = new Response<ResponseResult>(serverResponse);
 
       subscription.emit("response", response);
 
@@ -378,7 +382,7 @@ export class Client<
     }
 
     for (const message of this.messages) {
-      this.ws.send(JSON.stringify(message));
+      this.ws.send(Tsion.encode(message));
     }
 
     this.messages = [];
@@ -388,7 +392,7 @@ export class Client<
 
   public setSubscription(
     subscriptionKey: number,
-    subscription: Subscription<ResponseResult>
+    subscription: Subscription<ResponseResult>,
   ): void {
     this.subscriptions.set(subscriptionKey, subscription);
   }
@@ -398,7 +402,7 @@ export class Client<
   }
 
   public subscribe<P extends EndpointParams<U>>(
-    endpoint: P
+    endpoint: P,
   ): Subscription<EndpointResult<U, P>> {
     const emitter = new Emitter();
 
@@ -409,7 +413,7 @@ export class Client<
     const subscription = new Subscription<EndpointResult<U, P>>(
       self,
       this.subscriptionKey++,
-      endpoint
+      endpoint,
     );
 
     subscription.subscribe();

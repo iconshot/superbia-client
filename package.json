@@ -1,6 +1,6 @@
 {
   "name": "@superbia/client",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Connect to a Superbia server.",
   "homepage": "https://superbia.dev",
   "repository": {
@@ -32,6 +32,7 @@
     "typescript": "^5.6.3"
   },
   "dependencies": {
-    "everemitter": "^1.4.1"
+    "everemitter": "^1.4.1",
+    "tsion": "^1.0.1"
   }
 }

@@ -59,7 +59,7 @@ export class Response<R extends ResponseResult> {
     if (response.error !== null) {
       this.cache.error = new ErrorWithCode(
         response.error.code,
-        response.error.message
+        response.error.message,
       );
 
       return;
@@ -86,7 +86,7 @@ export class Response<R extends ResponseResult> {
       if (result.error !== null) {
         this.cache.error = new ErrorWithCode(
           result.error.code,
-          result.error.message
+          result.error.message,
         );
 
         return;
@@ -98,7 +98,7 @@ export class Response<R extends ResponseResult> {
     this.cache.result = results as R;
   }
 
-  public json(): ServerResponse {
+  public raw(): ServerResponse {
     return this.response;
   }
 
